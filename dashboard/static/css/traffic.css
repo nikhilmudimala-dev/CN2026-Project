@@ -1,0 +1,139 @@
+
+.traffic-scenarios {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin: 24px 0;
+}
+
+.scenario-card {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: 220px;
+}
+
+.scenario-number {
+    color: var(--accent, #5b8def);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    margin-bottom: 18px;
+}
+
+.scenario-card h3 {
+    margin: 0 0 10px;
+    font-size: 17px;
+}
+
+.scenario-card p {
+    margin: 0 0 22px;
+    color: var(--text-secondary, #9299aa);
+    font-size: 13px;
+    line-height: 1.6;
+    flex: 1;
+}
+
+.scenario-button,
+.traffic-job-stop {
+    border: none;
+    border-radius: 7px;
+    padding: 10px 16px;
+    background: var(--accent, #5b8def);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.scenario-button:hover,
+.traffic-job-stop:hover {
+    opacity: 0.85;
+}
+
+.scenario-button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.traffic-connection-panel {
+    padding: 22px;
+    margin-bottom: 24px;
+}
+
+.traffic-connection-panel p {
+    color: var(--text-secondary, #9299aa);
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 10px 0 0;
+}
+
+.traffic-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+#traffic-status-dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+}
+
+.traffic-online {
+    background: #27ae60;
+    box-shadow: 0 0 8px #27ae6080;
+}
+
+.traffic-offline {
+    background: #e05252;
+}
+
+#traffic-message {
+    margin-top: 14px;
+    font-size: 13px;
+}
+
+#traffic-message.traffic-error {
+    color: #e05252;
+}
+
+.traffic-jobs {
+    padding: 22px;
+}
+
+.traffic-jobs .panel-heading {
+    margin-bottom: 18px;
+}
+
+.traffic-job-stop {
+    padding: 7px 12px;
+    background: #c94c4c;
+}
+
+.traffic-jobs table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.traffic-jobs th,
+.traffic-jobs td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color, #303746);
+    font-size: 13px;
+}
+
+@media (max-width: 600px) {
+    .traffic-scenarios {
+        grid-template-columns: 1fr;
+    }
+
+    .traffic-jobs {
+        overflow-x: auto;
+    }
+}
+

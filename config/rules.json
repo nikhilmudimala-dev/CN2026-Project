@@ -1,0 +1,41 @@
+{
+    "severity_multipliers": {
+        "medium": 1.5,
+        "high": 2.5
+    },
+
+    "ban_policy": {
+        "history_window_seconds": 3600,
+        "escalation_factor": 0.5,
+        "maximum_seconds": 1800,
+        "base_duration": {
+            "low": 30,
+            "medium": 120,
+            "high": 300
+        }
+    },
+
+    "rules": {
+        "syn_rate": {
+            "enabled": true,
+            "action": "block",
+            "threshold": 20,
+            "window_seconds": 10
+        },
+
+        "connection_burst": {
+            "enabled": true,
+            "action": "block",
+            "threshold": 10,
+            "window_seconds": 30,
+            "handshake_timeout": 30
+        },
+
+        "port_scan": {
+            "enabled": true,
+            "action": "flag",
+            "threshold": 8,
+            "window_seconds": 10
+        }
+    }
+}

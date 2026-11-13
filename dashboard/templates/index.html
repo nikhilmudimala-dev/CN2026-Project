@@ -1,0 +1,235 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel | SDN Security Center</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/traffic.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">S</div>
+            <div>
+                <h2>SENTINEL</h2>
+                <span>SDN SECURITY CENTER</span>
+            </div>
+        </div>
+
+        <div class="side-label">WORKSPACE</div>
+        <nav>
+            <a href="#overview" class="nav-link active" data-page="overview">◈ <span>Overview</span></a>
+            <a href="#topology" class="nav-link" data-page="topology">⌘ <span>Network Topology</span></a>
+            <a href="#monitoring" class="nav-link" data-page="monitoring">▥ <span>Traffic Monitoring</span></a>
+            <a href="#rules" class="nav-link" data-page="rules">◉ <span>Detection Rules</span></a>
+            <a href="#bans" class="nav-link" data-page="bans">⊘ <span>Blocked Hosts</span></a>
+            <a href="#events" class="nav-link" data-page="events">≡ <span>Event Logs</span></a>
+            <a href="#" class="nav-link" data-page="traffic-generator">⚡ <span>Traffic Generator</span></a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="system-status">
+                <span class="status-dot"></span>
+                <div><strong>System Ready</strong><small>Dashboard connected</small></div>
+            </div>
+            <div class="sidebar-foot">SDN HOST BLOCKING SYSTEM<br>PROJECT V2.0</div>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div>
+                <div class="breadcrumb">SECURITY CENTER <span>/</span> <b id="page-name">OVERVIEW</b></div>
+                <h1 id="page-title">Security Overview</h1>
+                <p class="subtitle">Real-time visibility into your software-defined network.</p>
+            </div>
+            <div class="top-actions">
+                <div class="live-indicator"><span class="status-dot"></span> LIVE DATA</div>
+                <div class="clock" id="clock">--:--:--</div>
+            </div>
+        </header>
+
+        <section class="page active" id="overview">
+            <div class="section-heading">
+                <div><h2>Network at a glance</h2><p>Current system statistics and security activity.</p></div>
+                <span class="updated" id="last-updated">Updating...</span>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-top"><span>NETWORK HOSTS</span><span class="stat-icon blue">⌘</span></div><div class="stat-value" id="hosts-count">12</div><div class="stat-note">Configured endpoints</div></div>
+                <div class="stat-card"><div class="stat-top"><span>ACTIVE SWITCHES</span><span class="stat-icon purple">▦</span></div><div class="stat-value" id="switch-count">4</div><div class="stat-note">Core and access layer</div></div>
+                <div class="stat-card"><div class="stat-top"><span>DETECTIONS</span><span class="stat-icon orange">⌁</span></div><div class="stat-value" id="detection-count">0</div><div class="stat-note">Recorded detection events</div></div>
+                <div class="stat-card"><div class="stat-top"><span>ACTIVE BANS</span><span class="stat-icon red">⊘</span></div><div class="stat-value" id="ban-count">0</div><div class="stat-note">Currently recorded bans</div></div>
+            </div>
+
+            <div class="content-grid">
+                <div class="panel chart-panel">
+                    <div class="panel-heading"><div><h3>Detection distribution</h3><p>Events grouped by detection rule</p></div><span class="panel-tag">ALL TIME</span></div>
+                    <div class="chart-wrap"><canvas id="ruleChart"></canvas></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-heading"><div><h3>Security summary</h3><p>Recorded system activity</p></div></div>
+                    <div class="summary-list">
+                        <div><span>Total events</span><strong id="event-count">0</strong></div>
+                        <div><span>Blocking incidents</span><strong id="incident-count">0</strong></div>
+                        <div><span>Flagged alerts</span><strong id="alert-count">0</strong></div>
+                        <div><span>Observed hosts</span><strong id="observed-count">0</strong></div>
+                    </div>
+                    <div class="rule-mini">
+                        <span class="status-dot"></span>
+                        <div><strong>Detection engine</strong><small>Three rules configured</small></div>
+                        <span class="enabled">ENABLED</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel table-panel">
+                <div class="panel-heading"><div><h3>Recent security activity</h3><p>Latest events recorded by the controller</p></div><a href="#events" class="text-link">View all →</a></div>
+                <div class="table-scroll"><table><thead><tr><th>EVENT</th><th>SOURCE HOST</th><th>RULE</th><th>MESSAGE</th><th>TIME</th></tr></thead><tbody id="recent-events"></tbody></table></div>
+            </div>
+        </section>
+
+        <section class="page" id="topology">
+            <div class="section-heading"><div><h2>Network topology</h2><p>Hierarchical view of the Mininet test environment.</p></div><span class="panel-tag">12 HOSTS · 4 SWITCHES</span></div>
+            <div class="panel topology-panel">
+                <div class="topology-legend"><span><i class="legend-switch"></i> OpenFlow switch</span><span><i class="legend-host"></i> Network host</span></div>
+                <div class="topology-tree">
+                    <div class="node switch-node core-node"><span>◇</span><strong>s1</strong><small>CORE SWITCH</small></div>
+                    <div class="trunk"></div>
+                    <div class="branches">
+                        <div class="branch"><div class="node switch-node"><span>◇</span><strong>s2</strong><small>ACCESS SWITCH</small></div><div class="host-line"></div><div class="host-grid" id="hosts-s2"></div></div>
+                        <div class="branch"><div class="node switch-node"><span>◇</span><strong>s3</strong><small>ACCESS SWITCH</small></div><div class="host-line"></div><div class="host-grid" id="hosts-s3"></div></div>
+                        <div class="branch"><div class="node switch-node"><span>◇</span><strong>s4</strong><small>ACCESS SWITCH</small></div><div class="host-line"></div><div class="host-grid" id="hosts-s4"></div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="page" id="monitoring">
+            <div class="section-heading"><div><h2>Traffic monitoring</h2><p>Detection activity observed by the security engine.</p></div><span class="panel-tag">DATABASE HISTORY</span></div>
+            <div class="stats-grid compact-stats">
+                <div class="stat-card"><div class="stat-top"><span>R1 SYN RATE</span><span class="stat-icon blue">01</span></div><div class="stat-value" id="r1-count">0</div><div class="stat-note">Detection events</div></div>
+                <div class="stat-card"><div class="stat-top"><span>R2 CONNECTION BURST</span><span class="stat-icon purple">02</span></div><div class="stat-value" id="r2-count">0</div><div class="stat-note">Detection events</div></div>
+                <div class="stat-card"><div class="stat-top"><span>R3 PORT SCAN</span><span class="stat-icon orange">03</span></div><div class="stat-value" id="r3-count">0</div><div class="stat-note">Flagged events</div></div>
+            </div>
+            <div class="panel chart-panel large-chart"><div class="panel-heading"><div><h3>Detection activity by rule</h3><p>Historical detection and alert counts</p></div></div><div class="chart-wrap"><canvas id="monitorChart"></canvas></div></div>
+            <div class="panel table-panel"><div class="panel-heading"><div><h3>Recent detection events</h3><p>Controller detection records</p></div></div><div class="table-scroll"><table><thead><tr><th>TYPE</th><th>SOURCE</th><th>RULE</th><th>SEVERITY</th><th>MESSAGE</th></tr></thead><tbody id="monitor-events"></tbody></table></div></div>
+        </section>
+
+        <section class="page" id="rules">
+            <div class="section-heading"><div><h2>Detection rules</h2><p>Thresholds and operating parameters loaded from configuration.</p></div><span class="panel-tag">3 RULES CONFIGURED</span></div>
+            <div class="rule-cards">
+                <div class="panel rule-card"><div class="rule-card-top"><span class="rule-number">R1</span><span class="enabled">ACTIVE</span></div><h3>TCP SYN Rate</h3><p>Detects excessive TCP SYN packet activity from a single source within a rolling time window.</p><div class="rule-metrics"><div><small>THRESHOLD</small><strong id="r1-threshold">—</strong></div><div><small>WINDOW</small><strong id="r1-window">—</strong></div><div><small>ACTION</small><strong class="action-block">BLOCK</strong></div></div></div>
+                <div class="panel rule-card"><div class="rule-card-top"><span class="rule-number purple-bg">R2</span><span class="enabled">ACTIVE</span></div><h3>TCP Connection Burst</h3><p>Identifies hosts establishing an unusually high number of TCP connections in a time window.</p><div class="rule-metrics"><div><small>THRESHOLD</small><strong id="r2-threshold">—</strong></div><div><small>WINDOW</small><strong id="r2-window">—</strong></div><div><small>ACTION</small><strong class="action-block">BLOCK</strong></div></div></div>
+                <div class="panel rule-card"><div class="rule-card-top"><span class="rule-number orange-bg">R3</span><span class="enabled">ACTIVE</span></div><h3>TCP Port Scan</h3><p>Flags sources contacting many distinct destination ports on the same target.</p><div class="rule-metrics"><div><small>THRESHOLD</small><strong id="r3-threshold">—</strong></div><div><small>WINDOW</small><strong id="r3-window">—</strong></div><div><small>ACTION</small><strong class="action-flag">FLAG</strong></div></div></div>
+            </div>
+            <div class="panel config-panel"><div class="panel-heading"><div><h3>Rule configuration</h3><p>Update thresholds and detection windows.</p></div></div><div class="config-grid" id="config-fields"></div><button class="primary-btn" id="save-rules">Save configuration</button><p class="config-note">Configuration changes are saved to rules.json. Restart the controller for updated values to take effect.</p><div id="config-message"></div></div>
+        </section>
+
+        <section class="page" id="bans">
+            <div class="section-heading"><div><h2>Blocked hosts</h2><p>Hosts currently listed in the controller's active-ban database.</p></div><span class="panel-tag">TEMPORARY ENFORCEMENT</span></div>
+            <div class="panel table-panel"><div class="panel-heading"><div><h3>Active ban records</h3><p>Ban expiry and offence history</p></div></div><div class="table-scroll"><table><thead><tr><th>HOST IP</th><th>RULE</th><th>SEVERITY</th><th>OFFENCES</th><th>TIME REMAINING</th></tr></thead><tbody id="ban-table"></tbody></table></div></div>
+            <div class="panel table-panel"><div class="panel-heading"><div><h3>Blocking history</h3><p>Previously recorded blocking incidents</p></div></div><div class="table-scroll"><table><thead><tr><th>HOST IP</th><th>RULE</th><th>SEVERITY</th><th>OFFENCE COUNT</th><th>BAN DURATION</th></tr></thead><tbody id="incident-table"></tbody></table></div></div>
+        </section>
+
+        <section class="page" id="events">
+            <div class="section-heading"><div><h2>Event logs</h2><p>Security events persisted by the controller.</p></div><span class="panel-tag">PERSISTENT EVENT HISTORY</span></div>
+            <div class="panel table-panel"><div class="panel-heading"><div><h3>System event stream</h3><p>Latest 100 recorded events</p></div><button class="secondary-btn" id="refresh-events">Refresh</button></div><div class="table-scroll"><table><thead><tr><th>ID</th><th>EVENT TYPE</th><th>SOURCE</th><th>RULE</th><th>SEVERITY</th><th>MESSAGE</th><th>TIMESTAMP</th></tr></thead><tbody id="event-table"></tbody></table></div></div>
+        </section>
+
+        <section class="page" id="traffic-generator">
+            <div class="section-heading">
+                <div>
+                    <h2>Traffic Generator</h2>
+                    <p>Launch predefined traffic scenarios inside the Mininet test network.</p>
+                </div>
+                <span class="panel-tag">MININET LAB</span>
+            </div>
+
+            <div class="traffic-scenarios">
+                <div class="panel scenario-card">
+                    <span class="scenario-number">01</span>
+                    <h3>Normal Traffic</h3>
+                    <p>Generate periodic TCP connections to simulate ordinary network activity.</p>
+                    <button class="scenario-button" data-scenario="normal">Start Scenario</button>
+                </div>
+
+                <div class="panel scenario-card">
+                    <span class="scenario-number">02</span>
+                    <h3>TCP SYN Burst</h3>
+                    <p>Generate a burst of TCP connection requests to exercise the SYN-rate detector.</p>
+                    <button class="scenario-button" data-scenario="syn_burst">Start Scenario</button>
+                </div>
+
+                <div class="panel scenario-card">
+                    <span class="scenario-number">03</span>
+                    <h3>TCP Connection Burst</h3>
+                    <p>Generate multiple completed TCP connections to exercise the connection detector.</p>
+                    <button class="scenario-button" data-scenario="connection_burst">Start Scenario</button>
+                </div>
+
+                <div class="panel scenario-card">
+                    <span class="scenario-number">04</span>
+                    <h3>TCP Port Scan</h3>
+                    <p>Generate connection attempts across multiple ports to exercise the port-scan detector.</p>
+                    <button class="scenario-button" data-scenario="port_scan">Start Scenario</button>
+                </div>
+
+                <div class="panel scenario-card">
+                    <span class="scenario-number">05</span>
+                    <h3>Mixed Traffic</h3>
+                    <p>Run the four traffic patterns simultaneously from separate Mininet hosts.</p>
+                    <button class="scenario-button" data-scenario="mixed">Start Scenario</button>
+                </div>
+            </div>
+
+            <div class="panel traffic-connection-panel">
+                <div class="traffic-status">
+                    <span id="traffic-status-dot"></span>
+                    <strong id="traffic-status-text">Checking Mininet connection...</strong>
+                </div>
+                <p>Control server: 127.0.0.1:8765</p>
+                <p>Traffic is generated by Mininet hosts and observed by the SDN controller. All scenarios use predefined hosts and settings.</p>
+                <p id="traffic-message">Waiting for traffic control status...</p>
+            </div>
+
+            <div class="panel traffic-jobs">
+                <div class="panel-heading">
+                    <div>
+                        <h3>Scenario Activity</h3>
+                        <p>Current and previous traffic-generation jobs.</p>
+                    </div>
+                </div>
+                <div class="table-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Job ID</th>
+                                <th>Scenario</th>
+                                <th>Source</th>
+                                <th>Target</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="traffic-jobs-body">
+                            <tr><td colspan="6">Waiting for Mininet...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <footer>SENTINEL SDN SECURITY CENTER <span>·</span> DYNAMIC HOST BLOCKING SYSTEM <span class="footer-right">AUTO REFRESH · 5 SECONDS</span></footer>
+    </main>
+</div>
+<div class="toast" id="toast"></div>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='js/traffic_ui.js') }}"></script>
+</body>
+</html>
+
